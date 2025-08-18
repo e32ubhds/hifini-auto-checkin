@@ -1,5 +1,7 @@
 ## HIFINI 音乐磁场 定时自动签到
 
+本项目拉取自 ewigl / hifini-auto-checkin 感谢大佬的贡献
+
 利用 Github Actions 定时任务实现自动签到，支持多账号同时签到。
 
 [![HIFINI-Auto-Checkin](https://github.com/ewigl/hifini-auto-checkin/actions/workflows/Checkin.yml/badge.svg)](https://github.com/ewigl/hifini-auto-checkin/actions/workflows/Checkin.yml)
