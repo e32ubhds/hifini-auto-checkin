@@ -22,7 +22,7 @@ async function checkIn(account) {
   const responseJson = await response.json();
 
   if (responseJson.code === responseSuccessCode) {
-    console.log(`【${account.name}】: 签到成功。`);
+    console.log(`【${account.name}】: 签到成功.`);
     return responseJson.message;
   } else {
     if (responseJson.message === "今天已经签过啦！") {
@@ -61,13 +61,13 @@ async function main() {
 
   if (process.env.ACCOUNTS) {
     try {
-      accounts = JSON。parse(process。env.ACCOUNTS);
+      accounts = JSON.parse(process.env.ACCOUNTS);
     } catch (error) {
-      console.log("❌ 账户信息配置格式错误。");
-      process。exit(1);
+      console.log("❌ 账户信息配置格式错误.");
+      process.exit(1);
     }
   } else {
-    console.log("❌ 未配置账户信息。");
+    console.log("❌ 未配置账户信息.");
     process.exit(1);
   }
 
