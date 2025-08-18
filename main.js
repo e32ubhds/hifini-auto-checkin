@@ -46,7 +46,7 @@ async function processSingleAccount(account) {
     return {
       accountName: account.name,
       success: false,
-      message: error。message
+      message: error.message
     };
   }
 }
