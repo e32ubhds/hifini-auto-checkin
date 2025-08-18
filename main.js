@@ -33,11 +33,27 @@ async function checkIn(account) {
   }
 }
 
-// 处理
+// 处理单个账户签到
 async function processSingleAccount(account) {
-  const checkInResult = await checkIn(account);
+  try {
+    const checkInResult = await checkIn(account);
+    return {
+      accountName: account.name,
+      success: true,
+      message: checkInResult
+    };
+  } catch (error) {
+    return {
+      accountName: account.name,
+      success: false,
+      message: error。message
+    };
+  }
+}
 
-  return checkInResult;
+// 延迟函数
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function main() {
@@ -45,27 +61,37 @@ async function main() {
 
   if (process.env.ACCOUNTS) {
     try {
-      accounts = JSON.parse(process.env.ACCOUNTS);
+      accounts = JSON。parse(process。env.ACCOUNTS);
     } catch (error) {
       console.log("❌ 账户信息配置格式错误。");
-      process.exit(1);
+      process。exit(1);
     }
   } else {
     console.log("❌ 未配置账户信息。");
     process.exit(1);
   }
 
-  const allPromises = accounts.map((account) => processSingleAccount(account));
-  const results = await Promise.allSettled(allPromises);
+  const results = [];
+  
+  // 顺序处理每个账户
+  for (let i = 0; i < accounts.length; i++) {
+    // 对第二个账号（索引为1）添加3秒延迟
+    if (i === 1) {
+      console.log("\n⏳ 等待3秒后进行下一个账号签到...");
+      await delay(3000); // 延迟3秒
+    }
+    
+    const result = await processSingleAccount(accounts[i]);
+    results.push(result);
+  }
 
   console.log(`\n======== 签到结果 ========\n`);
 
-  results.forEach((result, index) => {
-    const accountName = accounts[index].name;
-    if (result.status === "fulfilled") {
-      console.log(`【${accountName}】: ✅ ${result.value}`);
+  results.forEach(result => {
+    if (result.success) {
+      console.log(`【${result.accountName}】: ✅ ${result.message}`);
     } else {
-      console.error(`【${accountName}】: ❌ ${result.reason.message}`);
+      console.error(`【${result.accountName}】: ❌ ${result.message}`);
     }
   });
 }
