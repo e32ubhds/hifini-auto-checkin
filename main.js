@@ -11,23 +11,23 @@ function checkIn(account) {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         "X-Requested-With": "XMLHttpRequest",
         "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"，
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
         Cookie: account.cookie,
       },
     });
 
-    if (response。statusCode < 200 || response。statusCode >= 300) {
+    if (response.statusCode < 200 || response.statusCode >= 300) {
       throw new Error(`网络请求出错 - ${response.statusCode}`);
     }
 
     const responseJson = JSON.parse(response.getBody('utf8'));
 
     if (responseJson.code === responseSuccessCode) {
-      console。log(`【${account。name}】: 签到成功.`);
-      return responseJson。message;
+      console.log(`【${account.name}】: 签到成功.`);
+      return responseJson.message;
     } else {
       if (responseJson.message === "今天已经签过啦！") {
-        console。log(`【${account。name}】: ${responseJson。message}`);
+        console.log(`【${account.name}】: ${responseJson.message}`);
         return responseJson.message;
       }
       throw new Error(`签到失败: ${responseJson.message}`);
@@ -42,7 +42,7 @@ function processSingleAccount(account) {
   try {
     const checkInResult = checkIn(account);
     return {
-      accountName: account。name,
+      accountName: account.name,
       success: true,
       message: checkInResult
     };
