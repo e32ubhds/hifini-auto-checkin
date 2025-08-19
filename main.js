@@ -12,7 +12,7 @@ function checkIn(account) {
         "X-Requested-With": "XMLHttpRequest",
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
-        Cookie: account.cookie,
+        Cookie: account.cookie
       },
     });
 
@@ -21,8 +21,14 @@ function checkIn(account) {
     }
 
     const responseJson = JSON.parse(response.getBody('utf8'));
+    // 新增：打印服务器完整响应,便于调试
+    console.log(`【${account.name}】: 服务器响应:`, JSON。stringify(responseJson));
 
+    // 优化：同时检查code和message,避免成功状态下的登录提示
     if (responseJson.code === responseSuccessCode) {
+      if (responseJson.message.includes("请登录")) {
+        throw new 错误(`签到状态异常: ${responseJson.message}`);
+      }
       console.log(`【${account.name}】: 签到成功.`);
       return responseJson.message;
     } else {
