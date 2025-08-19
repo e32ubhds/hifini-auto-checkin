@@ -6,7 +6,7 @@ function checkIn(account) {
   console.log(`【${account.name}】: 开始签到...`);
 
   try {
-    const response = request('POST'， signPageUrl， {
+    const response = request('POST', signPageUrl, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         "X-Requested-With": "XMLHttpRequest",
@@ -22,7 +22,7 @@ function checkIn(account) {
 
     const responseJson = JSON.parse(response.getBody('utf8'));
     // 新增：打印服务器完整响应,便于调试
-    console.log(`【${account.name}】: 服务器响应:`， JSON.stringify(responseJson));
+    console.log(`【${account.name}】: 服务器响应:`, JSON.stringify(responseJson));
 
     // 优化：同时检查code和message,避免成功状态下的登录提示
     if (responseJson.code === responseSuccessCode) {
