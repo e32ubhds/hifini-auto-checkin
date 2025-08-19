@@ -3,7 +3,7 @@ name: HIFITI-Auto-Checkin
 on:
   workflow_dispatch:
   schedule:
-    # UTC
+    # UTC 
     - cron: "40 23 * * *"
 
 jobs:
@@ -16,12 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js latest.
+      - name: Use Node.js latest
         uses: actions/setup-node@v4
         with:
           node-version: latest
 
-      - name: Checkin
+      - name: 安装依赖
+        run: npm install sync-request
+
+      - name: 执行签到
         shell: bash
         run: |
           node main.js
