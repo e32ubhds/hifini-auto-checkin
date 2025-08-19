@@ -21,10 +21,16 @@ function checkIn(account) {
     }
 
     const responseJson = JSON.parse(response.getBody('utf8'));
-    // 新增：打印服务器完整响应,便于调试
-    console.log(`【${account.name}】: 服务器响应:`, JSON.stringify(responseJson));
+    // 仅在调试时打印完整响应,生产环境可以注释掉
+    // console.log(`【${account.name}】: 服务器响应:`, JSON.stringify(responseJson));
 
-    // 优化：同时检查code和message,避免成功状态下的登录提示
+    // 检查签到状态并输出相应信息
+    if (responseJson.message === "今天已经签过啦！") {
+      console.log(`【${account.name}】: 今天已经签过啦！`);
+      return responseJson.message;
+    }
+    
+    // 检查是否成功
     if (responseJson.code === responseSuccessCode) {
       if (responseJson.message.includes("请登录")) {
         throw new 错误(`签到状态异常: ${responseJson.message}`);
@@ -32,11 +38,7 @@ function checkIn(account) {
       console.log(`【${account.name}】: 签到成功.`);
       return responseJson.message;
     } else {
-      if (responseJson.message === "今天已经签过啦！") {
-        console.log(`【${account.name}】: ${responseJson.message}`);
-        return responseJson.message;
-      }
-      throw new Error(`签到失败: ${responseJson.message}`);
+      throw new 错误(`签到失败: ${responseJson.message}`);
     }
   } catch (error) {
     throw error;
