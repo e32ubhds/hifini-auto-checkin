@@ -1,44 +1,48 @@
 const signPageUrl = "https://www.hifiti.com/sg_sign.htm";
 const responseSuccessCode = "0";
+const request = require('sync-request'); // 需要安装 sync-request 模块
 
-async function checkIn(account) {
+function checkIn(account) {
   console.log(`【${account.name}】: 开始签到...`);
 
-  const response = await fetch(signPageUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      "X-Requested-With": "XMLHttpRequest",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
-      Cookie: account.cookie,
-    },
-  });
+  try {
+    const response = request('POST', signPageUrl, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"，
+        Cookie: account.cookie,
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error(`网络请求出错 - ${response.status}`);
-  }
-
-  const responseJson = await response.json();
-
-  if (responseJson.code === responseSuccessCode) {
-    console.log(`【${account.name}】: 签到成功.`);
-    return responseJson.message;
-  } else {
-    if (responseJson.message === "今天已经签过啦！") {
-      console.log(`【${account.name}】: ${responseJson.message}`);
-      return responseJson.message;
+    if (response。statusCode < 200 || response。statusCode >= 300) {
+      throw new Error(`网络请求出错 - ${response.statusCode}`);
     }
-    throw new Error(`签到失败: ${responseJson.message}`);
+
+    const responseJson = JSON.parse(response.getBody('utf8'));
+
+    if (responseJson.code === responseSuccessCode) {
+      console。log(`【${account。name}】: 签到成功.`);
+      return responseJson。message;
+    } else {
+      if (responseJson.message === "今天已经签过啦！") {
+        console。log(`【${account。name}】: ${responseJson。message}`);
+        return responseJson.message;
+      }
+      throw new Error(`签到失败: ${responseJson.message}`);
+    }
+  } catch (error) {
+    throw error;
   }
 }
 
 // 处理单个账户签到
-async function processSingleAccount(account) {
+function processSingleAccount(account) {
   try {
-    const checkInResult = await checkIn(account);
+    const checkInResult = checkIn(account);
     return {
-      accountName: account.name,
+      accountName: account。name,
       success: true,
       message: checkInResult
     };
@@ -51,12 +55,15 @@ async function processSingleAccount(account) {
   }
 }
 
-// 延迟函数
+// 同步延迟函数
 function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  const start = Date.now();
+  while (Date.now() - start < ms) {
+    // 空循环等待
+  }
 }
 
-async function main() {
+function main() {
   let accounts;
 
   if (process.env.ACCOUNTS) {
@@ -78,10 +85,10 @@ async function main() {
     // 对第二个账号（索引为1）添加3秒延迟
     if (i === 1) {
       console.log("\n⏳ 等待3秒后进行下一个账号签到...");
-      await delay(3000); // 延迟3秒
+      delay(3000); // 延迟3秒
     }
     
-    const result = await processSingleAccount(accounts[i]);
+    const result = processSingleAccount(accounts[i]);
     results.push(result);
   }
 
